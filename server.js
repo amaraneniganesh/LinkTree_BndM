@@ -23,6 +23,14 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/links', linkRoutes);
 
+app.use((req, res) => {
+  res.send("unnam sir");
+});
+
+app.get("/live", (req, res) => {
+  res.send("lecha ra pumka");
+});
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
