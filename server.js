@@ -23,13 +23,13 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/links', linkRoutes);
 
+app.get("/live", (req, res) => {
+  res.send("lecha ra pumka");
+});
 app.use((req, res) => {
   res.send("unnam sir");
 });
 
-app.get("/live", (req, res) => {
-  res.send("lecha ra pumka");
-});
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -42,7 +42,7 @@ const server = app.listen(PORT, () => console.log(`Server running on port ${PORT
 
 // Cron job to ping the server every 14 minutes
 cron.schedule('*/14 * * * *', () => {
-  const url = `http://localhost:${PORT}/api/links`; // Replace with any endpoint you want to ping
+  const url = `https://linktree-bnd.onrender.com/live`; // Replace with any endpoint you want to ping
   axios.get(url)
     .then(response => {
       console.log('Server pinged successfully:', response.status);
