@@ -24,12 +24,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/links', linkRoutes);
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.log(err));
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
 // Start server
 const PORT = process.env.PORT || 5000;
@@ -37,7 +34,7 @@ const server = app.listen(PORT, () => console.log(`Server running on port ${PORT
 
 // Cron job to ping the server every 14 minutes
 cron.schedule('*/14 * * * *', () => {
-  const url = `https://linktree-bnd.onrender.com/api/links`; // Replace with any endpoint you want to ping
+  const url = `http://localhost:${PORT}/api/links`; // Replace with any endpoint you want to ping
   axios.get(url)
     .then(response => {
       console.log('Server pinged successfully:', response.status);
@@ -48,12 +45,16 @@ cron.schedule('*/14 * * * *', () => {
 });
 
 // Handle server shutdown gracefully
-process.on('SIGINT', () => {
-  server.close(() => {
-    console.log('Server closed');
-    mongoose.connection.close(false, () => {
-      console.log('MongoDB connection closed');
-      process.exit(0);
-    });
-  });
-});
+// process.on('SIGINT', async () => {
+//   try {
+//     await mongoose.connection.close(); // Close MongoDB connection
+//     console.log('MongoDB connection closed');
+//     server.close(() => {
+//       console.log('Server closed');
+//       process.exit(0);
+//     });
+//   } catch (err) {
+//     console.error('Error during shutdown:', err);
+//     process.exit(1);
+//   }
+// });
